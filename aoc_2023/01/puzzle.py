@@ -7,14 +7,14 @@ class Solution:
         total = 0
         for line in self.data:
             cl = CalibrationLine(line.strip())
-            total += int(cl.calibration_value)
+            total += int(cl.calibration_value(cl.first_digit, cl.second_digit))
         print(f"One answer: {total}")
 
     def two(self) -> None:
         total = 0
         for line in self.data:
             cl = CalibrationLine(line.strip())
-            total += int(cl.more_calibration_value)
+            total += int(cl.calibration_value(cl.first_digit_two, cl.second_digit_two))
         print(f"Two answer: {total}")
 
 
@@ -33,72 +33,43 @@ class CalibrationLine:
 
     def __init__(self, line_string: str) -> None:
         self.line_string = line_string
-        self.first_digit()
-        self.second_digit()
-        self.calibration_value()
-        self.more_digits_one()
-        self.more_digits_two()
-        self.more_calibration_value()
+        self.first_digit = self.find_first_digit_in_string(self.line_string)
+        self.second_digit = self.find_first_digit_in_string(self.line_string[::-1])
+        self.first_digit_two = self.find_first_digit_in_string_for_real(
+            self.line_string, self.DIGITS
+        )
+        self.second_digit_two = self.find_first_digit_in_string_for_real(
+            self.line_string[::-1], {k[::-1]: self.DIGITS[k] for k in self.DIGITS}
+        )
 
-    def first_digit(self):
-        for char in self.line_string:
+    def find_first_digit_in_string(self, calibration_string: str) -> str:
+        for char in calibration_string:
             try:
-                self.first_digit = str(int(char))
-                break
+                return str(int(char))
             except ValueError:
                 continue
 
-    def second_digit(self):
-        for char in self.line_string[::-1]:
-            try:
-                self.second_digit = str(int(char))
-                break
-            except ValueError:
-                continue
-
-    def more_digits_one(self):
-        for pos, char in enumerate(self.line_string):
+    def find_first_digit_in_string_for_real(
+        self, calibration_string: str, digit_map: dict[str, str]
+    ) -> str:
+        for pos, char in enumerate(calibration_string):
             try:
                 first_int = str(int(char))
                 break
             except ValueError:
                 continue
-        my_string = self.line_string.split(first_int)[0]
+        search_string = calibration_string.split(first_int)[0]
         digit_positions = {}
-        for digit in self.DIGITS:
-            if digit in my_string:
-                digit_positions.update({digit: my_string.find(digit)})
+        for digit in digit_map:
+            if digit in search_string:
+                digit_positions.update({digit: search_string.find(digit)})
         if len(digit_positions) == 0:
-            self.first_digit_two = first_int
+            return first_int
         else:
-            self.first_digit_two = self.DIGITS[
-                min(digit_positions, key=digit_positions.get)
-            ]
+            return digit_map[min(digit_positions, key=digit_positions.get)]
 
-    def more_digits_two(self):
-        for pos, char in enumerate(self.line_string[::-1]):
-            try:
-                first_int = str(int(char))
-                break
-            except ValueError:
-                continue
-        my_string = self.line_string[::-1].split(first_int)[0]
-        digit_positions = {}
-        for digit in self.DIGITS:
-            if digit[::-1] in my_string:
-                digit_positions.update({digit: my_string.find(digit[::-1])})
-        if len(digit_positions) == 0:
-            self.second_digit_two = first_int
-        else:
-            self.second_digit_two = self.DIGITS[
-                min(digit_positions, key=digit_positions.get)
-            ]
-
-    def calibration_value(self):
-        self.calibration_value = self.first_digit + self.second_digit
-
-    def more_calibration_value(self):
-        self.more_calibration_value = self.first_digit_two + self.second_digit_two
+    def calibration_value(self, first_digit, second_digit):
+        return first_digit + second_digit
 
 
 if __name__ == "__main__":
