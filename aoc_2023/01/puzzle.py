@@ -71,7 +71,9 @@ class CalibrationLine:
         if len(digit_positions) == 0:
             self.first_digit_two = first_int
         else:
-            self.first_digit_two = self.DIGITS[min(digit_positions, key=digit_positions.get)]
+            self.first_digit_two = self.DIGITS[
+                min(digit_positions, key=digit_positions.get)
+            ]
 
     def more_digits_two(self):
         for pos, char in enumerate(self.line_string[::-1]):
@@ -88,7 +90,9 @@ class CalibrationLine:
         if len(digit_positions) == 0:
             self.second_digit_two = first_int
         else:
-            self.second_digit_two = self.DIGITS[min(digit_positions, key=digit_positions.get)]
+            self.second_digit_two = self.DIGITS[
+                min(digit_positions, key=digit_positions.get)
+            ]
 
     def calibration_value(self):
         self.calibration_value = self.first_digit + self.second_digit
