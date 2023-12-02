@@ -12,22 +12,34 @@ class Solution:
         total_ids = 0
         for line in self.data:
             cube = CubeGame(line.strip())
-            if self.evaluate_game(cube):
+            if self.is_possible(cube):
                 total_ids += cube.game_id
         print(f"Total of game ids for possible games: {total_ids}")
 
     def two(self) -> None:
-        pass
+        total_power = 0
+        for line in self.data:
+            cube = CubeGame(line.strip())
+            max_values = self.get_max_values(cube.aggregate)
+            total_power += max_values["red"] * max_values["green"] * max_values["blue"]
+        print(f"Total power of sets: {total_power}")
 
-    def evaluate_game(self, cube_game):
+    def get_max_values(self, cube_game):
+        return {
+            "red": max(x.get("red", 0) for x in cube_game),
+            "green": max(x.get("green", 0) for x in cube_game),
+            "blue": max(x.get("blue", 0) for x in cube_game),
+        }
+
+    def is_possible(self, cube_game):
         for game in cube_game.aggregate:
             totals = {
                 "red": 0,
                 "green": 0,
                 "blue": 0,
             }
-            for marble in game:
-                totals[marble] += game[marble]
+            for cube in game:
+                totals[cube] += game[cube]
             if (
                 totals["red"] <= self.LIMITS["red"]
                 and totals["green"] <= self.LIMITS["green"]
@@ -60,10 +72,10 @@ class CubeGame:
     def game_values(self):
         for cube_set in self.cube_sets:
             game_values = {}
-            marbles = cube_set.split(",")
-            for marble in marbles:
-                split_marble = marble.strip().split(" ")
-                game_values.update({split_marble[1]: int(split_marble[0])})
+            cubes = cube_set.split(",")
+            for cube in cubes:
+                split_cube = cube.strip().split(" ")
+                game_values.update({split_cube[1]: int(split_cube[0])})
             self.aggregate.append(game_values)
 
 
