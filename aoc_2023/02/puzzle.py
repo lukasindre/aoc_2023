@@ -1,3 +1,4 @@
+import math
 import re
 
 
@@ -21,7 +22,7 @@ class Solution:
         for line in self.data:
             cube = CubeGame(line.strip())
             max_values = self.get_max_values(cube.aggregate)
-            total_power += max_values["red"] * max_values["green"] * max_values["blue"]
+            total_power += math.prod(max_values.values())
         print(f"Total power of sets: {total_power}")
 
     def get_max_values(self, cube_game):
