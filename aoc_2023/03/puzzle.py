@@ -9,7 +9,7 @@ class Solution:
     def one(self) -> None:
         total = 0
         for position, line in enumerate(self.data):
-            sl = SchematicLine(self.data, position, line)
+            sl = SchematicLine(self.data, position, line.strip())
             total += sl.sum_part_numbers
         print(f"The total of the valid part numbers is: {total}")
 
@@ -21,7 +21,7 @@ class SchematicLine:
     def __init__(self, dataframe, position, row):
         self.df = dataframe
         self.position = position
-        self.row = row.strip()
+        self.row = row
         self._search_row_for_numbers()
         self._find_get_number_positions()
         self._get_number_adjacent_values()
@@ -29,21 +29,22 @@ class SchematicLine:
         self._sum_part_numbers()
 
     def _search_row_for_numbers(self):
-        self.numbers = re.findall(r"\d+", self.row)
+        self.number_matches = re.finditer(r"\d+", self.row)
 
     def _find_get_number_positions(self):
         self.number_positions = {}
-        for number in self.numbers:
-            start = self.row.find(number)
-            end = start + len(number)
-            self.number_positions[number] = [x for x in range(start, end)]
+        for number_match in self.number_matches:
+            start = number_match.start()
+            end = number_match.end()
+            self.number_positions[number_match] = [x for x in range(start, end)]
 
     def _valid_part_numbers(self):
         self.valid_part_numbers = []
         for number in self.number_adjacent_values:
-            value_string = "".join(self.number_adjacent_values[number])
-            if len(value_string.replace(".", "")) > 0:
-                self.valid_part_numbers.append(number)
+            value_string = "".join(self.number_adjacent_values[number]).replace(".", "")
+            non_digit_value_string = re.search(r"\D+", value_string)
+            if non_digit_value_string is not None:
+                self.valid_part_numbers.append(int(number.group()))
 
     def _sum_part_numbers(self):
         self.sum_part_numbers = sum(self.valid_part_numbers)
@@ -120,7 +121,7 @@ class SchematicLine:
                     ]
                 else:
                     pass
-            self.number_adjacent_values[int(number_position)] = (
+            self.number_adjacent_values[number_position] = (
                 top
                 + bottom
                 + left
@@ -134,5 +135,6 @@ class SchematicLine:
 
 if __name__ == "__main__":
     s = Solution()
+    # s = Solution(input_file="ex_input.in")
     s.one()
     s.two()
