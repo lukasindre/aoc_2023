@@ -1,4 +1,5 @@
 import re
+from functools import lru_cache
 from math import pow
 
 
@@ -18,13 +19,17 @@ class Solution:
                 continue
             else:
                 total += pow(self.BASE, sc.number_of_matches - 1)
-        print(f"Total of you scorecard matches: {int(total)}")
+        print(f"Total of you scratch_card matches: {int(total)}")
 
+    @lru_cache
     def two(self) -> None:
-        scorecard_counts = {k: 0 for k in range(0, self.total_cards)}
-        print(scorecard_counts)
-        for pos, line in enumerate(self.data):
-            sc = ScratchCard(line)
+        scratch_card_counts = {k: 1 for k in range(0, self.total_cards)}
+        for scratch_card in scratch_card_counts:
+            for count in range(scratch_card_counts[scratch_card]):
+                sc = ScratchCard(self.data[scratch_card])
+                for match in range(sc.number_of_matches):
+                    scratch_card_counts[scratch_card + match + 1] += 1
+        print(f"Total number of scorecards: {(sum(scratch_card_counts.values()))}")
 
 
 class ScratchCard:
