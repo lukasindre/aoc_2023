@@ -14,7 +14,10 @@ class Solution:
         print(f"The total of the valid part numbers is: {total}")
 
     def two(self) -> None:
-        pass
+        total = 0
+        for position, line in enumerate(self.data):
+            sl = SchematicLine(self.data, position, line.strip())
+            print(sl.potential_gear_adjacent_values)
 
 
 class SchematicLine:
@@ -27,9 +30,15 @@ class SchematicLine:
         self._get_number_adjacent_values()
         self._valid_part_numbers()
         self._sum_part_numbers()
+        self._find_potential_gears()
+        self._find_gear_adjacent_parts()
+
+    def _find_potential_gears(self):
+        self.potential_gears = re.finditer(r"\*", self.row)
 
     def _search_row_for_numbers(self):
         self.number_matches = re.finditer(r"\d+", self.row)
+        self.matches_for_gears = []
 
     def _find_get_number_positions(self):
         self.number_positions = {}
@@ -134,7 +143,7 @@ class SchematicLine:
 
 
 if __name__ == "__main__":
-    s = Solution()
-    # s = Solution(input_file="ex_input.in")
+    # s = Solution()
+    s = Solution(input_file="ex_input.in")
     s.one()
     s.two()
