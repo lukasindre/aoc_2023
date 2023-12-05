@@ -30,6 +30,8 @@ class Solution:
                     location = x.process_number(location)
                 locations.append(location)
         print(min(locations))
+        with open("answers", "w") as f:
+            f.write(min(locations))
 
 
 class Mapperson:
