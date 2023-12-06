@@ -22,16 +22,15 @@ class Solution:
         print(min(locations))
 
     def two(self) -> None:
-        locations = []
+        min_location = float("inf")
         for seed_range in self.seed_ranges:
             for seed in range(seed_range[0], seed_range[0] + seed_range[1]):
                 location = seed
                 for x in self.maps:
                     location = x.process_number(location)
-                locations.append(location)
-        print(min(locations))
-        with open("answers", "w") as f:
-            f.write(min(locations))
+                if location < min_location:
+                    min_location = location
+                print(min_location)
 
 
 class Mapperson:
